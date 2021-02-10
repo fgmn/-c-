@@ -1,0 +1,447 @@
+文件1：.h
+
+#include <iostream>
+#include <cstring>
+
+//定义结构体作为学生成绩信息的基本单位 
+struct student{
+	long long int id;
+	char name[10];
+	int math;
+	int eng;
+	int c_lang;
+};
+
+//dat[30]
+//共用体：用于信息查询索引的存储 
+union index{
+		long long int id;
+		char name[10];
+};
+
+typedef struct student ss;
+
+
+void read();
+void write();
+void input();
+void output();
+void search();
+void modify();
+void delet();
+void menu();
+void semenu();
+int main(int argc, char** argv);
+
+文件2：main.cpp
+
+#include ".h"
+#define M eng
+#include <algorithm>
+using namespace std;
+
+//重载运算符
+//bool operator < (ss a,ss b){
+//	return a.M > b.M;
+//} 
+
+//整体设计思路 
+//成绩表录入和查询(输出）（逐条处理） 
+//高级选项（二级菜单）： 删除、修改、统计（整体读出，操作结束后整体写入） 
+
+ss data[30];
+int p=0;
+
+//打印成绩列表 
+void out(){
+	
+	ss stu;
+	
+	printf("序号   学号       姓名   英语  数学  计导\n");
+	
+	for(int i=0;i<p;i++){
+		stu=data[i];
+		
+		printf("%2d %10lld %8s %5d %5d %5d\n",i+1,stu.id,stu.name,stu.eng,stu.math,stu.c_lang);
+	} 
+}
+
+//高级功能函数区
+
+//打开文件将全部信息读出 
+void read(){
+	
+	FILE *fp;
+	fp=fopen("student.dat","rb");
+	
+	//异常处理 
+	if(fp==NULL){
+		printf("文件打开失败，请检查\n");
+		exit(520);
+	}
+	
+	ss stu;
+
+	p=0; 	//data数组伪指针
+	 
+//	while(!feof(fp)){
+//			fread(&stu,sizeof(stu),1,fp);
+//			data[p++]=stu;
+//		}
+//feof()函数在读完最后一组数据仍要在读取一次才能判断是否读到文件末尾
+//这样导致最后一组数据读入2次
+ 
+	while(1){
+		fread(&stu,sizeof(stu),1,fp);
+		if(feof(fp)) break;
+		data[p++]=stu;
+		
+	}
+	fclose(fp);
+}
+
+//打开文件将结构体数组信息整体写入 
+void write(){
+	FILE *fp;
+	fp=fopen("student.dat","wb+");
+	
+	if(fp==NULL){
+		printf("文件打开失败，请检查\n");
+		exit(520);
+	}
+	
+	ss stu;
+	
+	for(int i=0;i<p;i++){
+		stu=data[i];
+		fwrite(&stu,sizeof(stu),1,fp);
+	}
+	
+	fclose(fp);
+}
+
+//修改 
+void modify(){
+	printf("请选择修改信息序号\n");
+	int choi;
+	scanf("%d",&choi);
+	
+	ss stu;
+	
+	printf("请依次学生学号、姓名，英语、数学及导论成绩\n");
+	scanf("%lld %s %d %d %d",&stu.id,stu.name,&stu.eng,&stu.math,&stu.c_lang);
+	
+	data[choi-1]=stu;
+	printf("已修改\n");
+	out();
+	return;
+}
+
+//删除 
+void delet(){
+	printf("请选择删除信息序号\n");
+	int choi;
+	scanf("%d",&choi);
+	
+	while(choi!=p){
+		data[choi-1]=data[choi];
+		choi++;
+	} 
+	p--;
+		
+	printf("已删除\n");
+	out();
+	return;
+}
+
+//分数段查询及统计 
+void batch_query(){
+	//排序单科成绩
+	//统计各个分数段的人数
+	//暂时，不修改原始数据 
+	
+	printf("1、英语\n2、数学\n3、计导\n");
+	printf("请确认要排序查询的单科；");
+	
+	int num;
+	scanf("%d",&num);
+	
+	printf("请输入查询区间(eg：91 93)：");
+	int low,hig;
+	scanf("%d %d",&low,&hig);
+	 
+	ss dat[30];
+	
+	for(int i=0;i<p;i++){
+		dat[i]=data[i];
+	}
+	
+	//sort(dat,dat+p);
+	
+	ss stu;
+			
+//	for(int i=0;i<p;i++){
+//		stu=dat[i];
+//		printf("%2d %10lld %8s %5d %5d %5d\n",i+1,stu.id,stu.name,stu.eng,stu.math,stu.c_lang);
+//	} 
+
+	if(num==1){
+		printf("序号   学号       姓名   英语\n");
+		int count=0; 
+		for(int i=0;i<p;i++){
+			
+			stu=dat[i];
+			
+			if(stu.eng>=low && stu.eng<=hig){
+				printf("%2d %10lld %8s %5d\n",i+1,stu.id,stu.name,stu.eng);
+				count++;
+			}	
+		} 
+		printf("英语成绩分数在区间[%d,%d]共有%d人\n",low,hig,count);
+	}
+	else if(num==2){
+		printf("序号   学号       姓名   数学\n");
+		int count=0;
+		for(int i=0;i<p;i++){
+			stu=dat[i];
+			
+			if(stu.math>=low && stu.math<=hig){
+				printf("%2d %10lld %8s %5d\n",i+1,stu.id,stu.name,stu.math);
+				count++;
+			}
+			
+		} 
+		printf("数学成绩分数在区间[%d,%d]共有%d人\n",low,hig,count);
+	} 
+	else if(num==3){
+		printf("序号   学号       姓名   计导\n");
+		int count=0;
+		for(int i=0;i<p;i++){
+			stu=dat[i];
+			
+			if(stu.c_lang>=low && stu.c_lang<=hig){
+				printf("%2d %10lld %8s %5d\n",i+1,stu.id,stu.name,stu.c_lang);
+				count++; 
+			}
+			
+		}
+		printf("计导成绩分数在区间[%d,%d]共有%d人\n",low,hig,count); 
+	}
+	
+}
+
+//二级菜单
+void semenu(){
+		
+	read();
+	
+	out();
+	
+	while(1){
+		
+		printf("\n高级选项\n");
+		printf("1、成绩修改\n2、成绩删除\n3、单科成绩查询及分数分段统计\n4、返回上级菜单\n"); 
+		printf("请输入你的选择：");
+		
+		int choic;
+		int ret=scanf("%d",&choic);
+		if(ret==0){
+			printf("选项不存在，请重新选择\n");
+			continue;
+		} 
+			
+		//跳转功能区
+		switch(choic){
+			case 1:modify();
+			break;
+			case 2:delet();
+			break;
+			case 3:batch_query();
+			break;
+			case 4:write();
+			menu();
+			break;
+				
+		} 
+	}
+} 
+
+//菜单 
+void menu(){
+	while(1){
+		printf("\n主菜单\n");
+		printf("1、成绩录入\n2、查看所有成绩信息\n3、个人查询\n4、高级选项\n5、退出\n");
+		printf("请输入你的选择:");
+		
+		int choice;
+		int ret=scanf("%d",&choice);
+		if(ret==0){
+			printf("选项不存在，请重新选择\n");
+			continue;
+		} 
+		
+		//跳转功能区
+		switch(choice){
+			case 1:input();
+			break;
+			case 2:output();
+			break;
+			case 3:search();
+			break;
+			case 4:semenu();
+			break;
+			case 5:exit(1);
+			break; 
+			
+		} 
+	} 
+	
+		
+}
+
+int main(int argc, char** argv) {
+	
+	menu();	
+	
+	return 0;
+}
+
+文件3：son1.cpp
+
+#include ".h"
+
+void input(){
+	
+	FILE *fp;
+	//以读写方式打开二进制文件 
+	fp=fopen("student.dat","ab+");    //ab+追加 wb+覆写 rb+要求文件存在，不变 
+	
+	//错误处理
+	if(fp==NULL){
+		printf("文件打开失败，请检查\n");
+		exit(520);
+	} 
+	
+	ss stu;
+	
+	while(1){
+		//循环写入学生成绩信息
+		printf("请依次学生学号、姓名，英语、数学及导论成绩\n");
+		scanf("%lld %s %d %d %d",&stu.id,stu.name,&stu.eng,&stu.math,&stu.c_lang);
+		
+		//写入文件
+		fwrite(&stu,sizeof(stu),1,fp);
+		
+		printf("\n是否继续录入 (Y/N):");
+		char choi;
+		
+		fflush(stdin);	//清空输入缓存区 
+		
+		scanf("%c",&choi);
+		if(toupper(choi)!='Y'){
+			break;
+		}
+		 
+	}
+	
+	//关闭文件
+	fclose(fp); 
+}
+
+void output(){
+	
+	FILE *fp;
+	fp=fopen("student.dat","rb");
+	
+	if(fp==NULL){
+		printf("文件打开失败，请检查\n");
+		exit(520);
+	}
+	
+	ss stu;
+	
+	printf("\n学生成绩信息情况\n\n");
+	 
+//	while(!feof(fp)){
+//		//逐条读取信息并输出 
+//		fread(&stu,sizeof(stu),1,fp);
+//		printf("%10lld %8s %5d %5d %5d",stu.id,stu.name,stu.eng,stu.math,stu.c_lang);
+//		printf("\n");
+//	}
+
+    int i=0;
+    
+    //打印表头
+	printf("序号   学号       姓名   英语  数学  计导\n");
+	
+	 
+	while(1){
+		//逐条读取信息并输出 
+		fread(&stu,sizeof(stu),1,fp);
+		if(feof(fp)) break;
+		printf("%2d %10lld %8s %5d %5d %5d",i+1,stu.id,stu.name,stu.eng,stu.math,stu.c_lang);
+		i++;
+		printf("\n");
+	}
+	fclose(fp);
+}
+
+//查询
+void search(){
+	
+	FILE *fp;
+	fp=fopen("student.dat","rb");
+	
+	if(fp==NULL){
+		printf("文件打开失败，请检查\n");
+		exit(520);
+	}
+	
+	ss stu;
+	index ind;
+	
+	printf("1、学号查询\n2、名字查询\n");
+	printf("请选择查询方式：");
+	
+	int ab;
+	scanf("%d",&ab);
+	bool f=0;
+	
+	//共用体初体验
+	 
+	if(ab==1){
+		printf("请输入该生学号：");
+		scanf("%lld",&ind.id);
+		while(!feof(fp)){	//判断数否读到文件末尾 
+			//逐条读取信息与目标信息匹配 
+			fread(&stu,sizeof(stu),1,fp);
+			if(stu.id==ind.id){
+				printf("%15lld %8s %5d %5d %5d",stu.id,stu.name,stu.eng,stu.math,stu.c_lang);
+				f=1;
+				break; 
+			} 
+		}
+		
+	}
+	else if(ab==2){
+		printf("请输入该生名字："); 
+		scanf("%s",ind.name);
+		while(!feof(fp)){
+			//逐条读取信息与目标信息匹配 
+			fread(&stu,sizeof(stu),1,fp);
+			if(!strcmp(stu.name,ind.name)){
+				printf("%15lld %8s %5d %5d %5d",stu.id,stu.name,stu.eng,stu.math,stu.c_lang);
+				f=1;
+				break; 
+			} 
+		}
+	}
+	if(f==0){
+		printf("该生信息不存在，请重新输入信息\n");
+		//goto re;
+	} 
+	
+	fclose(fp);
+}
+
+
