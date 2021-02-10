@@ -1,0 +1,54 @@
+#include <iostream>
+#define N 100 
+#include <cstring>
+//#include "h_precision.h"
+
+char a[N],b[N];							//存储输入 
+int p[N]={0},q[N]={0},ans[N]={0};		//存储转化后的数值进行运算 
+
+
+void h_add(){
+	int carry=0;	//存储进位的数值 
+	int j;			//存储最大位在数组中的位置 
+	int l1,l2;
+	
+	
+	//转存进数组，倒序存储方便进行后续加减 
+	l1=strlen(a);
+	l2=strlen(b);
+	
+	for(int i=0;i<l1;i++){
+		p[i]=a[l1-i-1]-'0';
+	} 
+	for(int i=0;i<l2;i++){
+		q[i]=b[l2-i-1]-'0';
+	} 
+	
+	//高精度算法核心 
+	for(int i=0;i<N;i++){
+		ans[i]=p[i]+q[i]+carry;
+		carry=ans[i]/10;
+		ans[i]%=10;
+	} 
+	
+	//查找到最大位
+	for(j=N-1;;j--){
+		if(ans[j]!=0){
+			break; 
+		}
+	} 
+	
+	printf("\n结果等于：");
+	for(int i=j;i>=0;i--){
+		printf("%d",ans[i]); 
+	} 	
+}
+
+int main(int argc, char** argv){	
+	printf("请输入两个整数："); 
+	scanf("%s %s",a,b);
+		
+	h_add();
+
+	return 0;
+}
