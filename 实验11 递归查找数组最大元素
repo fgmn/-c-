@@ -1,0 +1,20 @@
+#include <iostream>
+
+int a[10]={51,93,15,6135,3336,7541,5,84,135,17};
+
+//数组元素的最大值，search(a[0],a[9])的值在a[0]和search(a[1],a[9])中 
+
+
+int search(int first,int last){
+	if(first==last){
+		return a[first];
+	}
+	else
+	return   a[first]  >  search(first+1,last)  ?  a[first] : search(first+1,last) ; 
+}
+
+int main(int argc, char** argv) {
+	printf("%d",search(0,9));
+	return 0;
+}
+
