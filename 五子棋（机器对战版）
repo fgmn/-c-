@@ -1,0 +1,233 @@
+#include <iostream>
+#include <cstring>
+#include <ctime>
+#include <cstdlib> 
+#include <windows.h>
+#define N 20      //棋盘大小 
+
+char pan[N][N];                 //棋盘      
+int round=1;                    //回合计数
+
+int step[4][2]={{1,0},{0,1},{1,1},{-1,1}};
+int direc[2]={-1,1};                            //遍历八个方向的单位量
+int prex,prey;                                  //记录AI当前位置,减少打分阶段参数传递 
+
+//评估函数之参数表
+int blo[4]={1,4,9,16};
+int att[4]={2,4,8,100}; 
+int boud[3]={5,2,1};
+
+//初始化 
+void initia(){
+	for(int i=1;i<N;i++){
+		for(int j=1;j<N;j++){
+			pan[i][j]='-';
+		}
+	}
+	pan[0][0]='0';
+	for(int i=1;i<N;i++){
+		pan[0][i]=i+'0';
+		pan[i][0]=i+'0';
+	}
+}
+
+//输出棋盘状态 
+void print(){
+	for(int i=0;i<N;i++){
+		for(int j=0;j<N;j++){
+			printf("%c ",pan[i][j]);
+		}
+		printf("\n"); 
+	}
+}
+
+//输赢判断     
+//判断思路：输赢肯定是产生最近一步落子，所以每一步棋就判断一下该位置几个方向有没有五连子                             
+void judge(int x,int y){
+
+	int count;	     //数连子
+	int row,col;     //八个方向移动遍历的坐标 
+	
+	for(int i=0;i<4;i++){
+		count=0;
+			
+		for(int j=0;j<2;j++){
+			for(int k=1;k<5;k++){
+				row=x + k*direc[j]*step[i][0];
+				col=y + k*direc[j]*step[i][1];
+				if(row<N && row>0 && col>0 && row<N && pan[x][y]==pan[row][col]){
+					count++;
+				} 
+				else{
+					break;
+				}
+			}	
+		}
+		if(count>3){
+			if(round%2==0){
+				printf("o获胜");
+			}
+			else{
+				printf("x获胜");
+			}
+			exit(520);
+		}	
+	}	
+	
+}
+
+//只能对一步进行预测 
+//启发式
+//可不断添加加分项
+int AIblock(int contler,char c){
+	int count;
+	int num=0;       //统计block个数 
+	int row,col;
+	
+	for(int i=0;i<4;i++){
+		count=0;
+	
+		for(int j=0;j<2;j++){
+			for(int k=1;k<=contler;k++){
+				row=prex + k*direc[j]*step[i][0];
+				col=prey + k*direc[j]*step[i][1];
+				if(row<N && row>0 && col>0 && row<N && pan[row][col]==c){
+					count++;
+				} 
+				else{
+					break;
+				}				
+			}
+		}
+		if(count>=contler){
+			num++;             //已经带有截断的功能 
+		}
+	}
+	
+	return num; 	 			
+} 
+
+int attack(int contler,char c){
+	int count;
+	int num=0;       //统计己方连子个数 
+	int row,col;
+	
+	for(int i=0;i<4;i++){
+		count=0;
+	
+		for(int j=0;j<2;j++){
+			for(int k=1;k<=contler;k++){
+				row=prex + k*direc[j]*step[i][0];
+				col=prey + k*direc[j]*step[i][1];
+				if(row<N && row>0 && col>0 && row<N && pan[row][col]==c){
+					count++;
+				} 
+				else{
+					break;
+				}				
+			}
+		}
+		if(count>=contler){
+			num++;
+		}
+	}
+	
+	return num;	 		
+}
+
+//评估函数 
+int scoring(){	
+	int sum=0;
+	//AI策略：  防御>进攻 
+	if(round%2==0){
+		for(int i=4;i>0;i--){
+			sum+=AIblock(i,'x')*blo[i-1];          //如何分配每种情况的权重 
+		}
+	
+		for(int i=3;i>0;i--){
+			sum+=attack(i,'o')*att[i-1];
+		}
+	
+		sum+=attack(4,'o')*att[3]; 
+	}
+	else{
+		for(int i=4;i>0;i--){
+			sum+=AIblock(i,'o')*blo[i-1];
+		}
+	
+		for(int i=3;i>0;i--){
+			sum+=attack(i,'x')*att[i-1];
+		}
+	
+		sum+=attack(4,'x')*att[3]; 
+	}
+	
+	//优化1：边界
+	for(int i=3;i>0;i--){
+		if(prex==i || prey==i || prey==(N-i) || prex==(N-i)){
+			sum-=boud[i-1];
+		} 
+	}
+	
+	//优化2：截断敌方棋子 
+	return sum;
+}
+
+void AI(){
+	srand((unsigned)time(NULL));
+	
+	int max=-1,t;               //记录最高评分以及当前打分       //优化：只对与棋子相邻的空格打分
+	int AIperfx,AIperfy;        //记录AI最优位置 
+	
+		for(prex=1;prex<N;prex++){
+			for(prey=1;prey<N;prey++){
+				if(pan[prex][prey]=='-'){
+					t=scoring();               //为这步棋打分评估 
+					if(max<t){                 //更新当前最优   
+					      max=t;
+						  AIperfx=prex;
+						  AIperfy=prey; 
+					} 
+					if(max==t && rand()%2==0){  //若分数相同，有50%概率更新 
+						max=t;
+						AIperfx=prex;
+						AIperfy=prey; 
+					}
+				}
+			}
+		} 
+	
+		//落子
+		if(round%2==0){
+			pan[AIperfx][AIperfy]='o';
+		} 
+		else{
+			pan[AIperfx][AIperfy]='x';
+		}
+		printf("%d %d\n",AIperfx,AIperfy);  //打印落子点 
+		print(); 
+		judge(AIperfx,AIperfy);
+}
+ 
+//对战 
+void play(){
+	
+	while(round){
+		AI();
+		//Sleep(1000);
+		round++;
+	}
+}
+
+int main(int argc, char** argv) {
+	
+	initia();
+	print();
+	
+	pan[10][10]='o';
+	play();
+	
+	system(0); 
+	return 0;
+}
+
