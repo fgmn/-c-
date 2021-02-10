@@ -1,0 +1,68 @@
+（1）共2^n枚，直接对半称
+#include <iostream>
+
+int a[16]={1};
+int direction;
+ 
+int search(int s,int e){
+	if(s==e){
+		//返回值最小即为0的位置
+		//比较到最后每个数组元素都要返回自身值进行大小比较 
+		direction=s;
+		return a[s]; 
+	}
+	int k=(s+e)/2;
+	return search(s,k) < search(k+1,e) ? search(s,k) : search(k+1,e);
+} 
+ 
+int main(int argc, char** argv) {
+	
+	a[7] = -1;
+	search(0,15);
+	printf("假币所在位置为 %d",direction);
+	
+	return 0;
+}
+
+（2）共n枚，要求O（n）的做法
+#思路：这时要二分可以先预处理一下各个区间的和。但是似乎已经O（n^2）了，三分应该只能优化一下常数，如果是递归的过程中求区间和可以降成O（n*logn），还是不行。
+后来我退一步想，O（n）的话就是只扫描一遍，这个过程中找出一个不同的数据，那考虑一个硬币和前后两个硬币的重量比较，若都不同则它是假币……
+
+#include <iostream>
+#define N 26
+
+int a[N]={0};    //N>=3
+
+int search(){
+	
+	for(int i=0;i<N;i++){
+		if(i==0){
+			if(!(a[0]==a[1]||a[0]==a[2])){
+				return 0;
+			}
+		}
+		else if(i==N-1){
+			if(!(a[i]==a[i-1]||a[i]==a[i-2])){
+				return i;
+			}
+		}
+		else{
+			if(!(a[i]==a[i-1]||a[i]==a[i+1])){
+			//和编号前后硬币质量不同的一定是假币 
+				return i;
+			}
+		}
+	}
+	return -1;
+}
+ 
+int main(int argc, char** argv) {
+	
+	a[20]=1;
+	
+	printf("假币的位置是 %d",search());
+	
+	return 0;
+}
+
+
