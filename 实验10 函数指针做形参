@@ -1,0 +1,36 @@
+#include <iostream>
+#include <cmath>
+
+int add(int a,int b){
+	return a+b;
+}
+int power(int a,int b){
+	return pow(a,b);
+} 
+int multi(int a,int b){
+	return a*b;
+}
+
+//添加const:只读取不修改
+//const char *msg[3]={"和","a的b次幂","积"};
+
+int process(int a,int b,int (*pf)(int,int)){
+	printf("%d\n",pf(a,b)); //使用函数指针 
+	return 0; 
+}
+
+int main(int argc, char** argv) {
+	
+	//声明并初始化指向函数的指针数组 
+    int (*pf[3])(int,int)={add,power,multi};
+    //函数指针要带上所传递函数的参数表 
+    
+	int x,y;
+	scanf("%d %d",&x,&y);
+	 
+	for(int i=0;i<3;i++){
+		process(x,y,pf[i]);
+		//逐个传递函数指针 
+	} 
+	return 0;
+}
