@@ -1,0 +1,365 @@
+#include <iostream>
+#include <cmath>
+#include<cstring>
+
+
+//10进制转2,8,16的子函数 
+void from10to2(int a,double b){
+	int num[10],snum[10],i=0,j;
+	while(a){
+		num[i]=a%2;
+	    a=(a-num[i])/2;
+	    i++;
+	    
+	}
+	i--;
+	printf("对应的二进制数：");
+	for(;i>=0;i--){
+	  printf("%d",num[i]);		
+	}
+	
+	printf(".");
+	//小数 
+	for(j=0;j<10;j++){
+		b*=2;
+		snum[j]=int(b);
+		b=b-snum[j];
+	}
+    
+    for(j=0;j<10;j++){
+    	printf("%d",snum[j]);
+	}
+}
+void from10to8(int a){
+	int num[10],i=0;
+	while(a){
+		num[i]=a%8;
+	    a=(a-num[i])/8;
+	    i++;
+	    
+	}
+	i--;
+	printf("\n整数部分对应的八进制数：");
+	for(;i>=0;i--){
+	  printf("%d",num[i]);		
+	}
+}
+
+void trans(int k){
+	if(k==10)
+	  printf("a");
+	else if(k==11)
+	  printf("b");
+	else if(k==12)
+	  printf("c");
+	else if(k==13)
+	  printf("d");
+	else if(k==14)
+	  printf("e");
+	else if(k==15)
+	  printf("f");
+	else
+	  printf("%d",k);
+}
+
+void from10to16(int a){
+	int num[10],i=0;
+	while(a){
+		num[i]=a%16;
+	    a=(a-num[i])/16;
+	    i++;
+	    
+	}
+	i--;
+	printf("\n整数部分对应的十六进制数：");
+	for(;i>=0;i--){
+	//调用转化函数 
+	  trans(num[i]);		
+	}
+	
+	
+}
+//10进制转2、8、16的主函数 
+void from10to(){
+	int a;
+	double b;
+
+	//整数与小数分开输入 
+	printf("请输入整数部分：");
+	scanf("%d",&a);
+	printf("请输入小数部分：");
+	scanf("%lf",&b);
+	
+	printf("已输入十进制数:%lf\n\n",a+b);
+	from10to2(a,b);
+	from10to8(a);
+	from10to16(a);
+}
+// 2、8、16转10进制的主函数 
+void fromto10(){
+	int k,l=0,a[20],i=0,j,snum[20];
+    double b;
+    
+    printf("请确定输入数的进制：");
+	scanf("%d",&j); 
+	printf("请输入该数(整数部分)：");
+	scanf("%d",&k);
+    if(j==2){
+    	printf("请输入该数的小数部分：");
+		scanf("%lf",&b);
+	} 
+	 while(k){
+	 	a[i]=k%10;
+	 	k=(k-a[i])/10;
+	 	i++;
+	 }
+	 i--;
+	 //秦九韶优化 
+	for(;i>=0;i--){
+	   l=(l+a[i])*j;
+     }
+	 i++;
+	if(j==2){
+		while(fabs(b-0)>=1E-6){
+		
+			b=b*10;
+			snum[i]=int(b);
+			b=b-snum[i];
+			i++;
+		}
+		i--;
+		for(;i>=0;i--){
+			b=b/2+snum[i];
+		}
+		b=b/2;
+	} 
+		printf("该数对应的十进制为%lf",(l/j)+b); 
+}
+
+//2进制转4、8、16的子函数（1） 
+void transto4(int a){
+	if(a==0)
+	printf("0");
+	if(a==01)
+	printf("1");
+	if(a==10)
+	printf("2");
+	if(a==11)
+	printf("3");
+} 
+void from2to4(long long int k){
+	int a[20],i=0;
+	while(k){
+		a[i]=k%100;
+		k=(k-a[i])/100;
+		i++;
+	}
+	i--;
+	printf("该数的四进制为"); 
+	for(;i>=0;i--){
+		transto4(a[i]);
+	}
+}
+void transto8(int a){
+	if(a==0)
+	printf("0");
+	if(a==1)
+	printf("1");
+	if(a==10)
+	printf("2");
+	if(a==11)
+	printf("3");
+	if(a==100)
+	printf("4");
+	if(a==101)
+	printf("5");
+	if(a==110)
+	printf("6");
+	if(a==111)
+	printf("7");
+	
+} 
+void from2to8(long long int k){
+	int a[20],i=0;
+	while(k){
+		a[i]=k%1000;
+		k=(k-a[i])/1000;
+		i++;
+	}
+	i--;
+	printf("该数的八进制为"); 
+	for(;i>=0;i--){
+		transto8(a[i]);
+	}
+}
+void transto16(int a){
+	if(a==0)
+	printf("0");
+	if(a==1)
+	printf("1");
+	if(a==10)
+	printf("2");
+	if(a==11)
+	printf("3");
+	if(a==100)
+	printf("4");
+	if(a==101)
+	printf("5");
+	if(a==110)
+	printf("6");
+	if(a==111)
+	printf("7");
+	if(a==1000)
+	printf("8");
+	if(a==1001)
+	printf("9");
+	if(a==1010)
+	printf("a");
+	if(a==1011)
+	printf("b");
+	if(a==1100)
+	printf("c");
+	if(a==1101)
+	printf("d");
+	if(a==1110)
+	printf("e");
+	if(a==1111)
+	printf("f");
+	
+} 
+void from2to16(long long int k){
+	int a[20],i=0;
+	while(k){
+		a[i]=k%10000;
+		k=(k-a[i])/10000;
+		i++;
+	}
+	i--;
+	printf("该数的十六进制为"); 
+	for(;i>=0;i--){
+		transto16(a[i]);
+	}
+}
+// 
+int trans_2(char c){
+	
+	if(c=='a')
+	return 10;
+	if(c=='b')
+	return 11;
+	if(c=='c')
+	return 12;
+	if(c=='d')
+	return 13;
+	if(c=='e')
+	return 14;
+	if(c=='f')
+	return 15;
+	if(c=='0')
+	return 0;
+	if(c=='1')
+	return 1;
+	if(c=='2')
+	return 2;
+	if(c=='3')
+	return 3;
+	if(c=='4')
+	return 4;
+	if(c=='5')
+	return 5;
+	if(c=='6')
+	return 6;
+	if(c=='7')
+	return 7;
+	if(c=='8')
+	return 8;
+	if(c=='9')
+	return 9;
+	
+	return 0;
+}
+//2、4、8、16进制互转的主函数 ，先将除二以外其他进制转10进制，再将10进制转二进制，用 （1） 的子函数截取2或3或4个数位进行对应转化 
+void BOH(){
+	//转成二进制，再截取转化 
+	int j,a[20],num[20],i=0,l=0,len=0;
+	long long int k=0;
+	char s[10];
+
+	printf("请确认输入数的进制：");
+	scanf("%d",&j);
+	printf("请输入该数:"); 
+	if(j==16){
+		scanf("%s",&s);
+		while(s[i]!='\0'){
+			len++;
+			i++;
+		}
+		for(i=0;i<len;i++){
+			l=l*16+(trans_2(s[i]));	
+		}
+		printf("\n该数的十进制为%d",l);	
+	}
+	else{
+	    scanf("%lld",&k);  
+	} 
+    i=0;
+	if(j==4&&j==8){
+		 while(k){
+	 	a[i]=k%10;
+	 	k=(k-a[i])/10;
+	 	i++;
+	 }
+	 i--; 
+	for(;i>=0;i--){
+	   l=(l+a[i])*j;
+     }
+     l=l/j;     
+	}
+	i=0;
+	
+	if(j!=2){
+		while(l){	
+		//printf("\n%d\n",l);
+		num[i]=l%2;
+		//printf("\n%d\n",num[i]);
+	    l=(l-num[i])/2;
+	    i++;   
+	}
+	i--;
+	for(;i>=0;i--){
+		k=k*10+num[i];
+		//printf("\n%d\n",k);
+	}
+	printf("\n该数的二进制为%lld\n",k);
+	goto two;
+	}
+	
+	if(j==2){
+    	two:from2to4(k);
+    	printf("\n"); 
+    	from2to8(k);
+    	printf("\n");
+    	from2to16(k);	
+	} 
+}
+
+
+//main函数实现交互功能，选择1,2,3跳转到三个子函数执行 
+int main(int argc, char** argv) {
+	//交互
+	int choice; 
+	printf("1、十进制转其他 \n2、其他转十进制\n3、2，4，8,16进制的相互转化\n（小数只实现十进制与二进制之间的转化)\n\n请选择你想转化的类型：");
+	re:scanf("%d",&choice);
+	switch(choice){
+		case 1:from10to();
+		break;
+		case 2:fromto10();
+		break;
+		case 3:BOH();
+		break;
+		default:printf("无此选项，请重新选择：");
+		goto re;
+		 
+	} 
+	return 0;
+}
