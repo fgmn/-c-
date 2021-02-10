@@ -1,0 +1,65 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <iostream> 
+#include <io.h>                    //包含函数access 
+#include <cstring>
+
+int main(int argc, char** argv) {
+	//对同目录下的两个文件进行操作
+	FILE *fp1=NULL,*fp2=NULL;
+	//创建两个文件指针
+	
+	char *path1,*path2;
+	
+	//printf("%s %s",argv[2],argv[1]);
+	
+	path1=argv[1];
+	path2=argv[2];
+	
+	//printf("%s %s",path1,path2);
+	
+	fp1=fopen(path1,"rt+");    //注意添加文件后缀名
+	//以只读方式读取文件a.c
+	if(fp1==NULL){
+		printf("could not open file \"a.c\".\n");
+		exit(520);
+	} 
+	
+	char c;
+	//检测文件b.c是否存在
+	 if(access(path2,0)==0){
+	 	printf("b.c已存在,是否覆盖\n");
+	 	
+	 	fflush(stdin);
+	 	
+	 	scanf("%c",&c);
+	 	if(c == 'n'){
+			exit(520);
+		 }
+	 } 
+			
+	//以读写方式打开文件b.c 
+	fp2=fopen(path2,"wt+");
+	if(fp2==NULL){
+		printf("could not create file \"b.c\".\n");
+		exit(520);
+	}
+	 
+	
+	char content[1000];          //字符指针？不行 
+	fread(content,1000,1,fp1);
+	
+	printf("\n复制内容如下\n");
+	printf("%s\n",content);
+	
+	int len=strlen(content);
+	fwrite(content,len,1,fp2);
+			
+		
+	//关闭文件 
+	fclose(fp1);
+	fclose(fp2);
+	
+	 
+	return 0;
+}
