@@ -1,0 +1,164 @@
+#include <iostream>
+#include <stdlib.h> 
+#define N 10 		//链表长度 
+
+int a[N]={6,3,1,0,9,2,8,4,5,7}; 
+ 
+struct data{
+	int n;
+	struct data *next;
+};
+
+data *head = NULL;
+
+//初始化链表
+//创建动态空间后将数a数组中的数据放入 
+
+void initia(){
+	data *newnode;
+	newnode = (data *)malloc(sizeof(data)); 	//为该指针开辟空间 
+	//建立新节点
+	if(newnode==NULL){
+		printf("头部初始化出错"); 
+	} 
+	newnode->n=a[0];
+	newnode->next=NULL;
+	head=newnode;
+	
+	
+	data *prenode;
+	prenode=head;
+	
+	for(int i=1;i<N;i++){
+		newnode = (data *)malloc(sizeof(data));
+		if(newnode==NULL){
+			printf("初始化出错");
+		} 
+		newnode->n=a[i];;
+		newnode->next=NULL;
+		prenode->next=newnode; 
+		prenode=newnode;
+	}
+	
+}
+
+//打印，遍历 
+int len=0; //记录链表长度 
+void print(){
+	
+	//遍历指针
+	data *k;
+	k=head;
+	while(k!=NULL){
+		len++; 
+		printf("%d ",k->n); 
+		k=k->next;
+	}	 
+	printf("\n");
+} 
+
+//排序
+void arrange(){
+	//对数据域进行排序
+	int swap;
+	data *p,*q;
+    
+	for(int i=1;i<len;i++){
+		p=head->next,q=head;
+		while(p!=NULL){
+			if((p->n) < (q->n)){
+				swap=p->n;
+				p->n=q->n;
+				q->n=swap;
+			}
+			q=p;
+			p=p->next;
+		}		
+	}		 
+}
+
+//插入
+void insert(){
+	data *t;
+	t=(data *)malloc(sizeof(data));
+	
+	int n;
+	printf("请输入插入值：");
+	scanf("%d",&n);
+	
+	data *p,*q=NULL; //指针q存储指针p的上一个值 
+
+	p=head;
+	//第一个，最后一个？
+	while(p!=NULL){
+		if((p->n)<n){
+			q=p;
+			p=p->next;
+		} 
+		else{
+			
+			if(q == NULL){
+				head = t;
+				t->n = n;
+			    t->next=p;
+			}
+			else{
+				t->n = n;
+			    t->next = p;
+			    q->next = t;
+			}
+			break;
+		}
+	}
+	//若p指向最后一个 
+	if(p == NULL){
+		q->next = t;
+		t->next = NULL;
+		t->n=n;
+	}	 
+	
+}
+
+//删除第一个查找值 
+void delet(){
+	int n;
+	printf("请输入你要删除的值：");
+	scanf("%d",&n);
+	
+	data *p=head,*q;
+	
+	while((p!=NULL) && ((p->n)<n)){
+		q = p;
+		p = p->next; 		//必定会终止 
+	} 
+	//若是找到了要删除的值，运用了&&短路运算符的性质，第一个判据不成立就不再判断第二个防止越界访问 
+	if( (p) &&(p->n)==n){ 	
+		q->next = p->next;
+		free(p);
+	}
+	else{
+		printf("不存在该值\n"); 
+	}
+}
+
+int main(int argc, char** argv) {
+	initia();
+	print();
+	arrange();
+	print();
+	
+	int n;
+	while(scanf("%d",&n)){
+		switch(n){
+			case 1:insert();
+			break;
+			case 2:delet();
+		}
+		print();
+	}
+	
+	
+	return 0;
+}
+
+
