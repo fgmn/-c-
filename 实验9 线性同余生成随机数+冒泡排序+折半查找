@@ -1,0 +1,111 @@
+#include <iostream>
+#define N 100
+#include <ctime>
+#include <cstdlib>
+
+
+//对同一块内存空间进行操作
+//使用线性同余法产生一个较大的随机数列，并对其进行排序，查找其中一个数 
+
+int a[N+1];	
+
+//产生随机的正负数序列 
+void generate_rand(){
+	
+    int k=-9,b=-1271,c=131,m=2000; 
+	
+	srand(time(NULL));
+	a[0]=rand();
+	
+	printf("随机产生的数列如下\n"); 
+	for(int i=1;i<N+1;i++){
+	    if(i%2==0){
+	    	a[i]=(k*a[i-1]+b)%m;
+		}
+		else{
+			a[i]=(k*a[i-1]+c)%m;
+		}
+		printf("%7d",a[i]);	
+		if((i%10)==0)
+		printf("\n");	
+	}
+}
+
+//输出 
+void output(){	
+	int i;
+	printf("\n该数列的升序排列如下\n");
+	for(i=1;i<N+1;i++){
+	printf("%7d",a[i]);
+	if((i%10)==0)
+		printf("\n");
+	}			
+}
+
+//排序 
+void arrange(){
+	int i,j,k;
+	
+	//冒泡排序(共N个数，冒泡N-1轮）
+	
+	for(i=1;i<N;i++){
+		for(j=1;j<N-i;j++){
+			if(a[j]>a[j+1]){
+				k=a[j+1];
+				a[j+1]=a[j];
+				a[j]=k;
+			} 	
+		}
+	} 			
+}
+
+//二分查找 
+void binsearch(){
+	
+	int target;
+	
+	while(1){
+		/*printf("是否查询：（1）查询（2）结束\n");
+		scanf("%d",&t);
+		if(t!=1)
+		break;*/
+		
+		printf("请输入你想查找的数\n");
+		scanf("%d",&target);
+		
+		//折半查找
+		int low=1,high=N;
+		int mid = (low+high)/2;
+		
+		while(1){
+			
+		if(high<low){
+			printf("该序列不存在这个数\n");
+			break;
+		}
+		if(a[mid]==target){ 	//此时可能是high=mid=low 
+		printf("该序列存在这个数\n");	
+		break;		
+		}
+		else if(a[mid]>target){
+			high=mid-1;
+			mid=(high+low)/2; 	//新的中间值 
+		}
+		else if(a[mid]<target){
+			low=mid+1;
+			mid=(high+low)/2;
+		}		
+	 }	 
+	}
+}
+
+
+int main(int argc, char** argv) {
+	
+	generate_rand();
+	arrange();
+	output();
+	
+	binsearch();
+	system("pause");
+}
