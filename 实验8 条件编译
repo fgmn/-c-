@@ -1,0 +1,23 @@
+#include <iostream>
+//条件编译的场景：程序作者在写交互的输入的时候，由于事先已经知道交互的内容，不需要输入的提示；
+//而用户需要这些提示 
+#define user 2 
+int main(int argc, char** argv) {
+	int a,b;
+	
+	#if user
+	printf("请输入两个整数(中间用空格分隔):");
+	#else
+	#endif
+	
+	scanf("%d %d",&a,&b);
+	
+	#if user
+	printf("这两个的整数的和为 %d",a+b);
+	#else
+	printf("%d",a+b);
+	#endif
+	
+	return 0;
+}
+
