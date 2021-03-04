@@ -1,0 +1,159 @@
+part one：
+
+#include <stdio.h>
+#include<math.h>
+
+int main(int argc, char** argv) {
+    int a,b,c,d,e;
+    long long int f;
+    unsigned int g;
+    float h;
+    double i;
+    
+    
+//整型数据
+	printf("%d\n",sizeof(a));			//32bit
+	 
+	a=-100;
+	printf("%d %o %x\n",a,a,a);
+	
+	b=-pow(2,31)+15;					//溢出直接舍去？ tick 
+	printf("%d %o %x\n",b,b,b);			//8进制是11位 ，是否第一位无效,且第二位是符号位 ？ 
+	
+	c=pow(2,31);
+	printf("%d %o %x\n\n\n",c,c,c);
+	
+//长整型数据	
+	printf("%d\n",sizeof(f));
+	f=-1;
+	printf("%lld %llo %llx\n",f,f,f);
+	printf("%d\n",sizeof(f));
+	f=-pow(2,31);
+	printf("%lld %llo %llx\n",f,f,f);
+	f=-pow(2,62);
+	printf("%lld %llo %llx\n\n\n",f,f,f);	//9.2*10^19 
+	//该环境下long long int也是32bit？  ×	注意控制符要和输出类型对应 
+
+
+//数位截取 
+	f=pow(2,23);
+	a=f;
+	printf("%d %o %x\n",a,a,a);
+	
+	f=pow(2,43);
+	a=f;
+	printf("%d %o %x\n\n\n",a,a,a);
+	
+//数位拓展
+	 a=pow(2,43);
+	 f=(long long int)a;
+	 printf("%lld %llo %llx\n\n\n",f,f,f);
+	 
+
+	
+//无符号整型	
+	g=1;
+	printf("%u %o %x\n",g,g,g);
+	g=-1;						//读入时机器按有符号位理解，输出时按特定类型输出？ 
+	printf("%u %o %x\n",g,g,g);
+	g=pow(2,32)-1;
+	printf("%u %o %x\n",g,g,g);
+	g=-2;						//机器理解成（最大数-2） 
+	printf("%u %o %x\n",g,g,g);
+	g=12;
+	printf("%u %o %x\n",g,g,g);//无符号数只输出有效数位 
+
+
+//    while(1)
+//	{
+//	    scanf("%d",&a);
+//        printf("%d %o %x\n",a,a,a);	
+// 
+//    }
+//
+//    while(1)
+//	{
+//	    scanf("%d",&f);
+//        printf("%d %o %x\n",f,f,f);	
+// 
+//    }
+
+part two:
+
+#include <iostream>
+
+int main(int argc, char** argv) {
+	
+	int box;
+	float f;
+	double d; 
+	unsigned *fp;            //指向4字节的无符号数指针
+	unsigned long long *dp;  //指向8字节的无符号数指针；
+	
+
+	 f=2332344.2356; 
+	 printf("%f  %o  %x\n",f,f,f);
+	 f=-0.0; 
+	 printf("%f  %o  %x\n",f,f,f);
+	 f=1.0; 
+	 printf("%f  %o  %x\n",f,f,f);
+	 f=-1.0; 
+	 printf("%f  %o  %x\n",f,f,f);
+	 f=1.2;
+	 printf("%f  %o  %x\n\n\n",f,f,f);
+	 
+	 //以上做法无法输出浮点数的机内码
+	  
+//	 box = f;
+//	 printf("%d  %o  %x\n",box,box,box);
+	 
+
+	 while(1){
+	 	 scanf("%f",&f);        //4字节存储
+	 	 if(f==52.0)
+	 	     break;
+         fp=(unsigned *)&f;     //将4字节的浮点数理解为4字节的无符号数
+         printf("f=%f, 0x%X\n",f,*fp);
+         //%08x控制输出位数，默认是8位 
+         printf("%x\n",*fp); 
+	 	
+	 }
+
+	 /*	 
+     while(1){
+     	scanf("%lf",&d);
+		if(d==52.0)                   //8字节存储
+		    break;           
+        dp=(unsigned long long *)&d;  //将8字节的浮点数理解为8字节的无符号数
+        printf("d=%lf,  0x%016llX\n",d,*dp);
+        printf("%llx\n",*dp);
+     	
+	 } 
+	 */
+   
+   part three:
+   
+   #include <iostream>
+
+int main(int argc, char** argv) {
+	
+	
+	while(1){
+		
+	char c;
+	scanf("%c",&c);
+	fflush(stdin);
+		
+	printf("%c\n",c);
+	printf("%d %o %x\n",c,c,c);		
+		
+	} 
+	 
+	//使用循环不断输入会执行两个换行+10 12 a  未清理输入缓存 
+	
+	return 0;
+}
+   
+   
+   
+   
